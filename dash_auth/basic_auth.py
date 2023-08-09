@@ -1,5 +1,5 @@
 import base64
-from typing import Optional, Union
+from typing import Optional, Union, Callable
 import flask
 from dash import Dash
 
@@ -10,23 +10,26 @@ class BasicAuth(Auth):
     def __init__(
         self,
         app: Dash,
-        username_password_list: Union[list, dict],
+        username_password_list: Union[list, dict, Callable[[str, str], str]],
         public_routes: Optional[list] = None,
     ):
         """Add basic authentication to Dash.
 
         :param app: Dash app
         :param username_password_list: username:password list, either as a
-            list of tuples or a dict
+            list of tuples or a dict or a callable function that returns a string
         :param public_routes: list of public routes, routes should follow the
             Flask route syntax
         """
         Auth.__init__(self, app, public_routes=public_routes)
-        self._users = (
-            username_password_list
-            if isinstance(username_password_list, dict)
-            else {k: v for k, v in username_password_list}
-        )
+        if isinstance(username_password_list, dict):
+            self._auth = username_password_list
+        elif isinstance(username_password_list, list):
+            self._auth = {k: v for k, v in username_password_list}
+        elif callable(username_password_list):
+            self._auth = username_password_list
+        else:
+            raise ValueError("username_password_list must be a list, dict, or callable")
 
     def is_authorized(self):
         header = flask.request.headers.get('Authorization', None)
@@ -35,7 +38,10 @@ class BasicAuth(Auth):
         username_password = base64.b64decode(header.split('Basic ')[1])
         username_password_utf8 = username_password.decode('utf-8')
         username, password = username_password_utf8.split(':', 1)
-        return self._users.get(username) == password
+        if callable(self._auth):
+            return self._auth(username, password)
+        else:
+            return self._auth.get(username) == password
 
     def login_request(self):
         return flask.Response(
