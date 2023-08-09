@@ -42,6 +42,19 @@ USER_PWD = {
 BasicAuth(app, USER_PWD)
 ```
 
+Alternativly the static dict can be replaced with a function:
+
+```python
+from dash import Dash
+from dash_auth import BasicAuth
+
+def authenticate(username : str, password : str) -> bool:
+    return username == 'username' and password == 'password'
+
+app = Dash(__name__)
+BasicAuth(app, authenticate)
+```
+
 ### Public routes
 
 You can whitelist routes from authentication with the `add_public_routes` utility function,
