@@ -8,7 +8,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = Dash(__name__, external_stylesheets=external_stylesheets)
 auth = dash_auth.BasicAuth(
     app,
-    username_password_list=authenticate
+    auth_func=authenticate
 )
 
 app.layout = html.Div([
