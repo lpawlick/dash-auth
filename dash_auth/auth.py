@@ -54,6 +54,7 @@ class Auth(ABC):
             # * Check whether the callback is marked as public
             # * Check whether the callback is performed on route change in
             #   which case the path should be checked against the public routes
+            pathname = None
             if request.path == "/_dash-update-component":
                 body = request.get_json()
 
@@ -72,12 +73,10 @@ class Auth(ABC):
                     ),
                     None,
                 )
-                if pathname and public_routes.test(pathname):
-                    return None
 
             # If the route is not a callback route, check whether the path
             # matches a public route, or whether the request is authorised
-            if public_routes.test(request.path) or self.is_authorized():
+            if public_routes.test(pathname if pathname else request.path) or self.is_authorized(pathname if pathname else request.path):
                 return None
 
             # Otherwise, ask the user to log in

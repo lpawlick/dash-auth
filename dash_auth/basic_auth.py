@@ -47,7 +47,7 @@ class BasicAuth(Auth):
                     else {k: v for k, v in username_password_list}
                 )
 
-    def is_authorized(self):
+    def is_authorized(self, path : str = None):
         header = flask.request.headers.get('Authorization', None)
         if not header:
             return False
@@ -56,7 +56,7 @@ class BasicAuth(Auth):
         username, password = username_password_utf8.split(':', 1)
         if self._auth_func is not None:
             try:
-                return self._auth_func(username, password)
+                return self._auth_func(username, password, path)
             except Exception as e:
                 print(e)
                 return False
