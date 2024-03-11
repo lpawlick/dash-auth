@@ -42,7 +42,7 @@ One can also use an authorization python function instead of a dictionary/list o
 from dash import Dash
 from dash_auth import BasicAuth
 
-def authorization_function(username, password):
+def authorization_function(username, password, path):
     if (username == "hello") and (password == "world"):
         return True
     else:
