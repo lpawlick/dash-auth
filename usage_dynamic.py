@@ -1,7 +1,7 @@
 from dash import Dash, Input, Output, dcc, html
 import dash_auth
 
-def authenticate(username, password):
+def authenticate(username, password, path):
     return username == 'hello' and password == 'world'
     
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']

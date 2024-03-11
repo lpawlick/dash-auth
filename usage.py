@@ -9,7 +9,7 @@ VALID_USERNAME_PASSWORD_PAIRS = {
 
 # Authorization function defined by developer
 # (can be used instead of VALID_USERNAME_PASSWORD_PAIRS [Example 2 below])
-def authorization_function(username, password):
+def authorization_function(username, password, path):
     if (username == "hello") and (password == "world"):
         return True
     else:
